@@ -6,7 +6,7 @@ const  client = new MongoClient(uri)
 const express = require('express')
 var jwt = require('jsonwebtoken')
 const app = express()
-const port = process.env.PORT ||3000
+const port = process.env.PORT ||3000;
 
 const swaggerUi = require('swagger-ui-express');
 const swaggerJsdoc = require('swagger-jsdoc');
