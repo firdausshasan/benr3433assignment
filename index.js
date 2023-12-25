@@ -6,7 +6,22 @@ const  client = new MongoClient(uri)
 const express = require('express')
 var jwt = require('jsonwebtoken')
 const app = express()
-const port = 3000
+const port = process.env.PORT ||3000
+
+const swaggerUi = require('swagger-ui-express');
+const swaggerJsdoc = require('swagger-jsdoc');
+const options = {
+    definition: {
+        openapi: '3.0.0',
+        info: {
+            title: 'VMS API',
+            version: '1.0.0'
+        },
+    },
+    apis: ['./index.js'],
+};
+const swaggerSpec = swaggerJsdoc(options);
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 //bcrypt
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
@@ -34,6 +49,47 @@ app.post( '/loginSecurity',async function (req, res) {
   await loginSecurity(idNumber, hashed)
 })
 
+
+/**
+ * @swagger
+ * /registerOwner:
+ *   post:
+ *     summary: Register Owner
+ *     description: Register a new owner if the user has security role
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               role:
+ *                 type: string
+ *               name:
+ *                 type: string
+ *               idNumber:
+ *                 type: string
+ *               email:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *               phoneNumber:
+ *                 type: string
+ *     responses:
+ *       '200':
+ *         description: Owner registered successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *       '400':
+ *         description: Invalid request body
+ *       '401':
+ *         description: Unauthorized - User does not have access to register an owner
+ */
 //register Owner
 app.post('/registerOwner', async function (req, res){
   let header = req.headers.authorization;
